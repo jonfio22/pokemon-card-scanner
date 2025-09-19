@@ -1,5 +1,7 @@
 # Pokemon Card Scanner 🎴
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+
 AI-powered Pokemon card scanner that identifies cards and fetches real-time market prices.
 
 ## Features
