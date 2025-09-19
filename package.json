@@ -1,21 +1,18 @@
 {
   "name": "pokemon-card-scanner",
   "version": "1.0.0",
-  "description": "Pokémon Card Scanner =========================",
+  "description": "AI-powered Pokemon card scanner with real-time pricing",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "python web_app.py",
+    "start": "python web_app.py"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NolanAmblard/Pokemon-Card-Scanner.git"
+    "url": "git+https://github.com/jonfio22/pokemon-card-scanner.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/NolanAmblard/Pokemon-Card-Scanner/issues"
-  },
-  "homepage": "https://github.com/NolanAmblard/Pokemon-Card-Scanner#readme"
+  "keywords": ["pokemon", "cards", "ai", "scanner", "pricing"],
+  "author": "jonfio22",
+  "license": "MIT",
+  "homepage": "https://github.com/jonfio22/pokemon-card-scanner#readme"
 }

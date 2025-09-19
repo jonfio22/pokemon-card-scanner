@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon Card Scanner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-6xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-red-500 bg-clip-text text-transparent">
+                Pokemon Card Scanner
+            </h1>
+            <p class="text-gray-400 text-xl">AI-powered card identification • Real-time market pricing</p>
+        </header>
+
+        <!-- Demo Notice -->
+        <div class="bg-blue-900/30 border border-blue-600 rounded-lg p-6 mb-8 max-w-4xl mx-auto">
+            <h2 class="text-2xl font-bold mb-4 text-blue-400">🚀 Try it Now!</h2>
+            <p class="mb-4">This demo requires running the Python backend locally for full functionality.</p>
+            
+            <div class="bg-gray-800 rounded-lg p-4 mb-4">
+                <pre class="text-sm overflow-x-auto"><code>git clone https://github.com/jonfio22/pokemon-card-scanner
+cd pokemon-card-scanner
+pip install -r requirements.txt
+echo "GOOGLE_API_KEY=your-key-here" > .env
+python web_app.py</code></pre>
+            </div>
+            
+            <p class="text-sm text-gray-400">
+                Get your free API key from 
+                <a href="https://makersuite.google.com/app/apikey" class="text-blue-400 underline" target="_blank">Google AI Studio</a>
+            </p>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid md:grid-cols-3 gap-8 mb-12">
+            <div class="bg-gray-800 rounded-xl p-8 text-center transform hover:scale-105 transition">
+                <div class="text-6xl mb-4">📷</div>
+                <h3 class="text-xl font-bold mb-2">Scan Any Card</h3>
+                <p class="text-gray-400">Upload images or use camera to capture Pokemon cards</p>
+            </div>
+            
+            <div class="bg-gray-800 rounded-xl p-8 text-center transform hover:scale-105 transition">
+                <div class="text-6xl mb-4">🤖</div>
+                <h3 class="text-xl font-bold mb-2">AI Analysis</h3>
+                <p class="text-gray-400">Google Gemini 2.0 identifies cards and extracts details</p>
+            </div>
+            
+            <div class="bg-gray-800 rounded-xl p-8 text-center transform hover:scale-105 transition">
+                <div class="text-6xl mb-4">💰</div>
+                <h3 class="text-xl font-bold mb-2">Live Pricing</h3>
+                <p class="text-gray-400">Real-time prices from TCGPlayer and eBay</p>
+            </div>
+        </div>
+
+        <!-- Screenshots -->
+        <div class="bg-gray-800 rounded-xl p-8 mb-12">
+            <h2 class="text-3xl font-bold mb-6 text-center">See it in Action</h2>
+            <div class="aspect-video bg-gray-700 rounded-lg flex items-center justify-center">
+                <div class="text-center">
+                    <div class="text-6xl mb-4">🎴</div>
+                    <p class="text-gray-400">Screenshot placeholder - Run locally to see the full UI</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="text-center mb-12">
+            <h2 class="text-2xl font-bold mb-6">Built With</h2>
+            <div class="flex flex-wrap justify-center gap-4">
+                <span class="bg-gray-800 px-4 py-2 rounded-full">Python</span>
+                <span class="bg-gray-800 px-4 py-2 rounded-full">Flask</span>
+                <span class="bg-gray-800 px-4 py-2 rounded-full">Google Gemini AI</span>
+                <span class="bg-gray-800 px-4 py-2 rounded-full">OpenCV</span>
+                <span class="bg-gray-800 px-4 py-2 rounded-full">BeautifulSoup</span>
+                <span class="bg-gray-800 px-4 py-2 rounded-full">Tailwind CSS</span>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="text-center">
+            <a href="https://github.com/jonfio22/pokemon-card-scanner" 
+               class="inline-block bg-gradient-to-r from-yellow-400 to-red-500 hover:from-yellow-500 hover:to-red-600 
+                      text-black font-bold py-4 px-8 rounded-lg text-xl transform hover:scale-105 transition">
+                View on GitHub
+            </a>
+        </div>
+    </div>
+</body>
+</html>
