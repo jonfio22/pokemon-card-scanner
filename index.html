@@ -5,89 +5,275 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokemon Card Scanner</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .scanning { animation: pulse 2s infinite; }
+    </style>
 </head>
 <body class="bg-gray-900 text-white min-h-screen">
     <div class="container mx-auto px-4 py-8 max-w-6xl">
         <!-- Header -->
         <header class="text-center mb-12">
-            <h1 class="text-6xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-red-500 bg-clip-text text-transparent">
+            <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-yellow-400 to-red-500 bg-clip-text text-transparent">
                 Pokemon Card Scanner
             </h1>
-            <p class="text-gray-400 text-xl">AI-powered card identification • Real-time market pricing</p>
+            <p class="text-gray-400 text-lg">Scan cards • Get AI analysis • Check market prices</p>
         </header>
 
-        <!-- Demo Notice -->
-        <div class="bg-blue-900/30 border border-blue-600 rounded-lg p-6 mb-8 max-w-4xl mx-auto">
-            <h2 class="text-2xl font-bold mb-4 text-blue-400">🚀 Try it Now!</h2>
-            <p class="mb-4">This demo requires running the Python backend locally for full functionality.</p>
-            
-            <div class="bg-gray-800 rounded-lg p-4 mb-4">
-                <pre class="text-sm overflow-x-auto"><code>git clone https://github.com/jonfio22/pokemon-card-scanner
-cd pokemon-card-scanner
-pip install -r requirements.txt
-echo "GOOGLE_API_KEY=your-key-here" > .env
-python web_app.py</code></pre>
+        <!-- Main Content -->
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- Upload Section -->
+            <div class="bg-gray-800 rounded-xl p-8 shadow-2xl">
+                <h2 class="text-2xl font-bold mb-6">Scan Your Card</h2>
+                
+                <!-- Camera/Upload Toggle -->
+                <div class="flex space-x-4 mb-6">
+                    <button onclick="startCamera()" class="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition">
+                        📷 Use Camera
+                    </button>
+                    <button onclick="document.getElementById('fileInput').click()" class="flex-1 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition">
+                        📁 Upload Image
+                    </button>
+                </div>
+                
+                <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+                
+                <!-- Preview Area -->
+                <div id="previewArea" class="relative bg-gray-700 rounded-lg h-96 flex items-center justify-center overflow-hidden">
+                    <video id="video" class="absolute inset-0 w-full h-full object-contain hidden"></video>
+                    <img id="preview" class="absolute inset-0 w-full h-full object-contain hidden">
+                    <canvas id="canvas" class="hidden"></canvas>
+                    <div id="placeholder" class="text-gray-500 text-center">
+                        <div class="text-6xl mb-4">🎴</div>
+                        <p>Upload or capture a card image</p>
+                    </div>
+                </div>
+                
+                <!-- Scan Button -->
+                <button id="scanBtn" onclick="scanCard()" class="w-full mt-6 bg-gradient-to-r from-yellow-400 to-red-500 hover:from-yellow-500 hover:to-red-600 text-black font-bold py-3 px-6 rounded-lg transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                    Scan Card
+                </button>
             </div>
-            
-            <p class="text-sm text-gray-400">
-                Get your free API key from 
-                <a href="https://makersuite.google.com/app/apikey" class="text-blue-400 underline" target="_blank">Google AI Studio</a>
-            </p>
-        </div>
 
-        <!-- Features Grid -->
-        <div class="grid md:grid-cols-3 gap-8 mb-12">
-            <div class="bg-gray-800 rounded-xl p-8 text-center transform hover:scale-105 transition">
-                <div class="text-6xl mb-4">📷</div>
-                <h3 class="text-xl font-bold mb-2">Scan Any Card</h3>
-                <p class="text-gray-400">Upload images or use camera to capture Pokemon cards</p>
-            </div>
-            
-            <div class="bg-gray-800 rounded-xl p-8 text-center transform hover:scale-105 transition">
-                <div class="text-6xl mb-4">🤖</div>
-                <h3 class="text-xl font-bold mb-2">AI Analysis</h3>
-                <p class="text-gray-400">Google Gemini 2.0 identifies cards and extracts details</p>
-            </div>
-            
-            <div class="bg-gray-800 rounded-xl p-8 text-center transform hover:scale-105 transition">
-                <div class="text-6xl mb-4">💰</div>
-                <h3 class="text-xl font-bold mb-2">Live Pricing</h3>
-                <p class="text-gray-400">Real-time prices from TCGPlayer and eBay</p>
-            </div>
-        </div>
-
-        <!-- Screenshots -->
-        <div class="bg-gray-800 rounded-xl p-8 mb-12">
-            <h2 class="text-3xl font-bold mb-6 text-center">See it in Action</h2>
-            <div class="aspect-video bg-gray-700 rounded-lg flex items-center justify-center">
-                <div class="text-center">
-                    <div class="text-6xl mb-4">🎴</div>
-                    <p class="text-gray-400">Screenshot placeholder - Run locally to see the full UI</p>
+            <!-- Results Section -->
+            <div class="bg-gray-800 rounded-xl p-8 shadow-2xl">
+                <h2 class="text-2xl font-bold mb-6">Analysis Results</h2>
+                
+                <div id="results" class="hidden">
+                    <!-- Card Info -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-yellow-400 mb-3">Card Information</h3>
+                        <div id="cardInfo" class="bg-gray-700 rounded-lg p-4 space-y-2"></div>
+                    </div>
+                    
+                    <!-- Pricing -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-green-400 mb-3">Market Prices</h3>
+                        <div id="pricing" class="bg-gray-700 rounded-lg p-4"></div>
+                    </div>
+                    
+                    <!-- AI Analysis -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-400 mb-3">AI Analysis</h3>
+                        <div id="aiAnalysis" class="bg-gray-700 rounded-lg p-4 text-sm"></div>
+                    </div>
+                </div>
+                
+                <div id="loading" class="hidden text-center py-12">
+                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400"></div>
+                    <p class="mt-4 text-gray-400">Analyzing card...</p>
+                </div>
+                
+                <div id="error" class="hidden bg-red-900/50 border border-red-500 rounded-lg p-4">
+                    <p class="font-semibold">Error</p>
+                    <p id="errorMsg" class="text-sm mt-1"></p>
+                </div>
+                
+                <div id="noResults" class="text-center py-12 text-gray-500">
+                    <div class="text-6xl mb-4">🔍</div>
+                    <p>Scan a card to see results</p>
                 </div>
             </div>
         </div>
-
-        <!-- Tech Stack -->
-        <div class="text-center mb-12">
-            <h2 class="text-2xl font-bold mb-6">Built With</h2>
-            <div class="flex flex-wrap justify-center gap-4">
-                <span class="bg-gray-800 px-4 py-2 rounded-full">Python</span>
-                <span class="bg-gray-800 px-4 py-2 rounded-full">Flask</span>
-                <span class="bg-gray-800 px-4 py-2 rounded-full">Google Gemini AI</span>
-                <span class="bg-gray-800 px-4 py-2 rounded-full">OpenCV</span>
-                <span class="bg-gray-800 px-4 py-2 rounded-full">BeautifulSoup</span>
-                <span class="bg-gray-800 px-4 py-2 rounded-full">Tailwind CSS</span>
-            </div>
-        </div>
-
-        <!-- CTA -->
-        <div class="text-center">
-            <a href="https://github.com/jonfio22/pokemon-card-scanner" 
-               class="inline-block bg-gradient-to-r from-yellow-400 to-red-500 hover:from-yellow-500 hover:to-red-600 
-                      text-black font-bold py-4 px-8 rounded-lg text-xl transform hover:scale-105 transition">
-                View on GitHub
-            </a>
-        </div>
     </div>
+
+    <script>
+        let currentImage = null;
+        let stream = null;
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    currentImage = e.target.result;
+                    showPreview(currentImage);
+                    document.getElementById('scanBtn').disabled = false;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function startCamera() {
+            const video = document.getElementById('video');
+            const constraints = {
+                video: {
+                    facingMode: 'environment',
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            };
+
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then((mediaStream) => {
+                    stream = mediaStream;
+                    video.srcObject = stream;
+                    video.classList.remove('hidden');
+                    document.getElementById('placeholder').classList.add('hidden');
+                    document.getElementById('preview').classList.add('hidden');
+                    
+                    // Change scan button to capture
+                    const scanBtn = document.getElementById('scanBtn');
+                    scanBtn.textContent = '📸 Capture & Scan';
+                    scanBtn.disabled = false;
+                    scanBtn.onclick = captureAndScan;
+                })
+                .catch((err) => {
+                    console.error('Error accessing camera:', err);
+                    alert('Could not access camera. Please upload an image instead.');
+                });
+        }
+
+        function captureAndScan() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const context = canvas.getContext('2d');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0);
+            
+            currentImage = canvas.toDataURL('image/jpeg');
+            stopCamera();
+            showPreview(currentImage);
+            scanCard();
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            document.getElementById('video').classList.add('hidden');
+            const scanBtn = document.getElementById('scanBtn');
+            scanBtn.textContent = 'Scan Card';
+            scanBtn.onclick = scanCard;
+        }
+
+        function showPreview(imageSrc) {
+            const preview = document.getElementById('preview');
+            preview.src = imageSrc;
+            preview.classList.remove('hidden');
+            document.getElementById('placeholder').classList.add('hidden');
+            document.getElementById('video').classList.add('hidden');
+        }
+
+        async function scanCard() {
+            if (!currentImage) return;
+
+            // Show loading
+            document.getElementById('loading').classList.remove('hidden');
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('error').classList.add('hidden');
+            document.getElementById('noResults').classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/scan', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ image: currentImage })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    displayResults(data);
+                } else {
+                    showError(data.error || 'Failed to analyze card');
+                }
+            } catch (err) {
+                showError('Network error: ' + err.message);
+            } finally {
+                document.getElementById('loading').classList.add('hidden');
+            }
+        }
+
+        function displayResults(data) {
+            document.getElementById('results').classList.remove('hidden');
+            
+            // Display the processed image if available
+            if (data.display_image) {
+                const preview = document.getElementById('preview');
+                preview.src = data.display_image;
+            }
+            
+            // Card Info
+            const cardInfo = document.getElementById('cardInfo');
+            const card = data.identified_card || {};
+            cardInfo.innerHTML = `
+                <p><span class="text-gray-400">Name:</span> <span class="font-semibold">${escapeHtml(card.name || 'Unknown')}</span></p>
+                <p><span class="text-gray-400">Set:</span> ${escapeHtml(card.set || 'Unknown')}</p>
+                <p><span class="text-gray-400">Number:</span> ${escapeHtml(card.number || 'Unknown')}</p>
+                <p><span class="text-gray-400">Rarity:</span> ${escapeHtml(card.rarity || 'Unknown')}</p>
+            `;
+
+            // Pricing
+            const pricing = document.getElementById('pricing');
+            if (data.pricing && data.pricing.summary) {
+                const summary = data.pricing.summary;
+                const avgPrice = parseFloat(summary.average_price) || 0;
+                const minPrice = parseFloat(summary.min_price) || 0;
+                const maxPrice = parseFloat(summary.max_price) || 0;
+                
+                pricing.innerHTML = `
+                    <div class="text-2xl font-bold text-green-400 mb-2">$${avgPrice.toFixed(2)}</div>
+                    <p class="text-sm text-gray-400">Range: $${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}</p>
+                    ${data.pricing.sources?.ebay?.average_sold_price ? 
+                        `<p class="text-sm text-gray-400 mt-2">eBay Average: $${parseFloat(data.pricing.sources.ebay.average_sold_price).toFixed(2)}</p>` : ''}
+                `;
+            } else {
+                pricing.innerHTML = '<p class="text-gray-400">No pricing data available</p>';
+            }
+
+            // AI Analysis
+            const aiAnalysis = document.getElementById('aiAnalysis');
+            if (data.card_details) {
+                try {
+                    const formatted = JSON.stringify(data.card_details, null, 2);
+                    aiAnalysis.innerHTML = `<pre class="whitespace-pre-wrap">${escapeHtml(formatted)}</pre>`;
+                } catch (e) {
+                    aiAnalysis.innerHTML = '<p class="text-gray-400">Error formatting analysis data</p>';
+                }
+            } else {
+                aiAnalysis.innerHTML = '<p class="text-gray-400">No detailed analysis available</p>';
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showError(message) {
+            document.getElementById('error').classList.remove('hidden');
+            document.getElementById('errorMsg').textContent = message;
+        }
+    </script>
 </body>
 </html>
