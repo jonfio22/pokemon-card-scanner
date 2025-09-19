@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: pokemon-card-scanner
+    runtime: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn web_app:app"
+    envVars:
+      - key: GOOGLE_API_KEY
+        sync: false
+    autoDeploy: false
