@@ -1,0 +1,21 @@
+{
+  "name": "pokemon-card-scanner",
+  "version": "1.0.0",
+  "description": "Pokémon Card Scanner =========================",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NolanAmblard/Pokemon-Card-Scanner.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/NolanAmblard/Pokemon-Card-Scanner/issues"
+  },
+  "homepage": "https://github.com/NolanAmblard/Pokemon-Card-Scanner#readme"
+}

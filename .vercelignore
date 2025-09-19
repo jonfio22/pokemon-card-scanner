@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+ENV/
+env/
+
+# Testing
+test_*.py
+*_test.py
+*_TEST_*.md
+*test*.json
+*test*.html
+
+# Database files
+*.db
+*.sqlite
+
+# Local development
+.env
+.env.local
+setup*.sh
+db_setup.py
+
+# Documentation
+README*.md
+BACKEND_TEST_REPORT.md
+FRONTEND_TEST_REPORT.md
+FINAL_INTEGRATION_REPORT.md
+DEPLOYMENT_CHECKLIST.md
+
+# Evolution card images (too many/large)
+evolutionsCardsImages/
+
+# Test images
+testImages/
+
+# Large ML models cache
+*.onnx
+*.pb
+*.h5
+*.pth
+
+# Documentation
+*.pdf
+
+# Unused files
+main.py
+enhanced_*.py
+cardData.py
+cardSet.py
+pokedex.py
+evolutionsSet.py
+utils.py

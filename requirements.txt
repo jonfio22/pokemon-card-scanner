@@ -1,0 +1,20 @@
+# Core dependencies
+opencv-python==4.8.1.*
+Pillow==11.3.*
+numpy==1.26.*
+
+# Google Gemini AI
+google-generativeai==0.3.*
+
+# Web scraping
+requests==2.31.*
+beautifulsoup4==4.12.*
+fake-useragent==1.4.*
+lxml==4.9.*
+
+# Web framework
+Flask==3.0.*
+flask-cors==4.0.*
+
+# Environment variables
+python-dotenv==1.0.*

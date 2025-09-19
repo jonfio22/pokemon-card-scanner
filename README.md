@@ -1,40 +1,78 @@
-Pokémon Card Scanner
-=========================
+# Pokemon Card Scanner 🎴
 
+AI-powered Pokemon card scanner that identifies cards and fetches real-time market prices.
 
-https://user-images.githubusercontent.com/57413019/187007394-c514c680-810f-4ce1-b1dc-e10459b5b45c.mp4
+## Features
+- 📷 Scan cards with camera or upload images
+- 🤖 AI card identification using Google Gemini 2.0
+- 💰 Real-time pricing from TCGPlayer and eBay
+- 🎯 Works with ANY Pokemon card (not limited to specific sets)
+- 🌐 Beautiful web interface with Tailwind CSS
 
+## Quick Start
 
-This repository contains Python code for a Pokémon card scanner and identifier for any card in the [Evolutions Pokémon set](https://bulbapedia.bulbagarden.net/wiki/Evolutions_%28TCG%29).  
+### 1. Clone the repository
+```bash
+git clone https://github.com/yourusername/pokemon-card-scanner
+cd pokemon-card-scanner
+```
 
-The code first starts by defining whether the input is a live video or a saved image. If live video is chosen, the computer's second webcam is used which can be connected to a smart phone using the `Iriun Webcam` app.  
+### 2. Install dependencies
+```bash
+pip install -r requirements.txt
+```
 
-Using the `OpenCV` library, we can get a normalized scan (think PDF scanner apps) of the Pokémon card in the feed by doing the following:
- 1. Taking in a single image or video feed
- 2. Finding edges in the image/frame
- 3. Finding the biggest contour that is a rectangle
- 4. Finding the corners of the biggest contour
- 5. Identifying which corner is which (i.e. reordering the corners to ensure that they are in the order: topLeft, topRight, bottomLeft, bottomRight)
- 6. Creating a transformation matrix based on the original corners to transform the image / frame of the card into a vertical rectangle   
-   
-It then gets the hashes (average hash, whash, phash, dhash) of the scanned card using the `ImageHash` library and compares these hashes to their counterparts for each card in the Evolutions set by finding the distance between these hashes. By using four different hashing methods, we can reduce the margin of error that only using one may introduce.  A smaller distance is indicative of more cards being more similar. A cutoff value is defined so as if a hash distance is smaller than it, we can assume the images are similar. 
+### 3. Set up your API key
+Create a `.env` file:
+```
+GOOGLE_API_KEY=your-gemini-api-key-here
+```
 
-These hashes are stored in the `EvolutionsCards` table of the `pokemoncarddatabase` MySQL database, which is created through the `cardData.createDatabase()` and `cardData.initializeDatabase()` function calls.  
-  
-This database stores information in three tables: **Pokemon**, **EvolutionsCards**, and **EvolutionsSet**. These tables hold the following data:  
+Get your free API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
 
-**Pokémon**:
-|  dexnumber | pokemon | type | stage | height |
-|--|--|--|--|--|
+### 4. Run the app
+```bash
+python web_app.py
+```
 
-**EvolutionsSet**:
-|  cardnumber| cardname| pokemon| rarity| cardtype|
-|--|--|--|--|--|
+Open http://localhost:5000 in your browser
 
-**EvolutionsCards**:
-|  cardnumber| avghashes| avghashesmir| avghashesud| avghashesmirud| whashes | whashesmir | whashesud | whashesmirud | phashes | phashesmir | phashesud | phashesmirud | dhashes | dhashesmir | dhashesud | dhashesmirud |
-|--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|--|  
+## How it Works
 
-*Note: The **EvolutionsCards** table has four hashes saved for each hashing method, representing different orientations the card may be in (normal, mirrored, upside down, mirrored & upside down) to ensure that a card can be scanned no matter its orientation.*
-  
-If a similar card is found, information on said card is printed to the console. If the code was using a live feed, it is aborted.
+1. **Upload/Capture** - Use the web interface to upload a card image
+2. **AI Analysis** - Google Gemini identifies the card and extracts details
+3. **Price Lookup** - Fetches current market prices from multiple sources
+4. **Display Results** - Shows card info and pricing in a clean interface
+
+## Tech Stack
+- **Backend**: Python, Flask
+- **AI**: Google Gemini 2.0 Flash
+- **Frontend**: HTML, Tailwind CSS, JavaScript
+- **Image Processing**: OpenCV, Pillow
+- **Web Scraping**: BeautifulSoup, Requests
+
+## Project Structure
+```
+pokemon-card-scanner/
+├── web_app.py              # Flask web server
+├── standalone_scanner.py   # Core scanning logic
+├── card_analyzer.py        # Gemini AI integration
+├── price_scraper.py        # Web scraping for prices
+├── templates/
+│   └── index.html         # Web interface
+├── requirements.txt        # Python dependencies
+└── .env                   # Your API key (create this)
+```
+
+## Deployment
+
+For local use only. For production deployment:
+- Consider using official APIs instead of web scraping
+- Add rate limiting and caching
+- Use a proper database for price history
+
+## Contributing
+Feel free to open issues or submit PRs!
+
+## License
+MIT
