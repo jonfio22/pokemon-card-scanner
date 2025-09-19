@@ -4,11 +4,12 @@ services:
     env: python
     region: oregon
     plan: free
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn --bind 0.0.0.0:$PORT web_app:app"
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn --bind 0.0.0.0:$PORT web_app:app --timeout 120 --workers 1"
     envVars:
       - key: GOOGLE_API_KEY
         sync: false
       - key: PYTHON_VERSION
-        value: "3.11"
+        value: "3.11.9"
     autoDeploy: false
+    healthCheckPath: /api/health
