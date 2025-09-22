@@ -20,8 +20,13 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# Initialize scanner
-scanner = StandaloneCardScanner(google_api_key=os.environ.get('GOOGLE_API_KEY'))
+# Initialize scanner with error handling
+try:
+    scanner = StandaloneCardScanner(google_api_key=os.environ.get('GOOGLE_API_KEY'))
+    print("Scanner initialized successfully")
+except Exception as e:
+    print(f"Scanner initialization error: {e}")
+    scanner = None
 
 @app.route('/')
 def index():
@@ -30,6 +35,9 @@ def index():
 @app.route('/api/scan', methods=['POST'])
 def scan_card():
     try:
+        if scanner is None:
+            return jsonify({'error': 'Scanner not initialized - check API key'}), 500
+            
         # Get image data from request
         try:
             data = request.json
@@ -72,7 +80,12 @@ def scan_card():
 
 @app.route('/api/health')
 def health():
-    return jsonify({'status': 'ok', 'api_key_set': bool(os.environ.get('GOOGLE_API_KEY'))})
+    return jsonify({
+        'status': 'ok', 
+        'api_key_set': bool(os.environ.get('GOOGLE_API_KEY')),
+        'scanner_initialized': scanner is not None
+    })
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
