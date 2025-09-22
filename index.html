@@ -31,7 +31,7 @@
                 
                 <!-- Camera/Upload Toggle -->
                 <div class="flex space-x-4 mb-6">
-                    <button onclick="startCamera()" class="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition">
+                    <button id="cameraBtn" onclick="toggleCamera()" class="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition">
                         📷 Use Camera
                     </button>
                     <button onclick="document.getElementById('fileInput').click()" class="flex-1 bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg transition">
@@ -103,10 +103,12 @@
     <script>
         let currentImage = null;
         let stream = null;
+        let cameraActive = false;
 
         function handleFileSelect(event) {
             const file = event.target.files[0];
             if (file) {
+                stopCamera();
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     currentImage = e.target.result;
@@ -114,6 +116,14 @@
                     document.getElementById('scanBtn').disabled = false;
                 };
                 reader.readAsDataURL(file);
+            }
+        }
+
+        function toggleCamera() {
+            if (cameraActive) {
+                stopCamera();
+            } else {
+                startCamera();
             }
         }
 
@@ -131,11 +141,20 @@
                 .then((mediaStream) => {
                     stream = mediaStream;
                     video.srcObject = stream;
+                    video.play();
                     video.classList.remove('hidden');
                     document.getElementById('placeholder').classList.add('hidden');
                     document.getElementById('preview').classList.add('hidden');
                     
-                    // Change scan button to capture
+                    cameraActive = true;
+                    
+                    // Update camera button
+                    const cameraBtn = document.getElementById('cameraBtn');
+                    cameraBtn.textContent = '⏹️ Stop Camera';
+                    cameraBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    cameraBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+                    
+                    // Update scan button to capture
                     const scanBtn = document.getElementById('scanBtn');
                     scanBtn.textContent = '📸 Capture & Scan';
                     scanBtn.disabled = false;
@@ -144,6 +163,7 @@
                 .catch((err) => {
                     console.error('Error accessing camera:', err);
                     alert('Could not access camera. Please upload an image instead.');
+                    cameraActive = false;
                 });
         }
 
@@ -167,10 +187,23 @@
                 stream.getTracks().forEach(track => track.stop());
                 stream = null;
             }
+            
+            cameraActive = false;
             document.getElementById('video').classList.add('hidden');
+            
+            // Reset camera button
+            const cameraBtn = document.getElementById('cameraBtn');
+            cameraBtn.textContent = '📷 Use Camera';
+            cameraBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+            cameraBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            
+            // Reset scan button
             const scanBtn = document.getElementById('scanBtn');
             scanBtn.textContent = 'Scan Card';
             scanBtn.onclick = scanCard;
+            if (!currentImage) {
+                scanBtn.disabled = true;
+            }
         }
 
         function showPreview(imageSrc) {
